@@ -30,18 +30,18 @@ class TestPartitioning(TestCase):
         second = Schema.objects.create(name='second', schema='second')
         
         first.activate()
-        foo = AwareModel.objects.create(name="Foo object").name
-        bar = AwareModel.objects.create(name="Bar object").name
+        foo = AwareModel.objects.create(name="Foo object")
+        bar = AwareModel.objects.create(name="Bar object")
         
         second.activate()
-        baz = AwareModel.objects.create(name="Baz object").name
+        baz = AwareModel.objects.create(name="Baz object")
         
         second.deactivate()
         
         self.assertEquals(3, len(list(AwareModel.objects.from_schemata(Schema.objects.all()))))
         
-        self.assertEquals([baz], [x.name for x in AwareModel.objects.from_schemata(second)])
-        self.assertNotIn(baz, [x.name for x in AwareModel.objects.from_schemata(first)])
+        self.assertEquals(baz, list(AwareModel.objects.from_schemata(second))[0])
+        self.assertNotIn(baz, list(AwareModel.objects.from_schemata(first)))
     
     def test_naive_objects_are_created_in_public_schema(self):
         first = Schema.objects.create(name='first', schema='first')

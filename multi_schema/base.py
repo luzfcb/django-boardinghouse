@@ -1,6 +1,7 @@
 from django.db import models
 
-from models import Schema
+from .models import Schema
+from .schema import get_schema
 
 class MultiSchemaMixin(object):
     def from_schemata(self, *schemata):
@@ -24,13 +25,27 @@ class MultiSchemaManager(MultiSchemaMixin, models.Manager):
 
 class SchemaAware(object):
     _is_schema_aware = True
+    
+    def __init__(self, *args, **kwargs):
+        super(SchemaAware, self).__init__(*args, **kwargs)
+        # This doesn't work with MultiSchemaMixin-created object.
+        if self.pk:
+            self._schema = get_schema()
+        else:
+            self._schema = None
+    
+    def __eq__(self, other):
+        return super(SchemaAware, self).__eq__(other) and self._schema == other._schema
+    
+    def save(self, *args, **kwargs):
+        self._schema = get_schema()
+        return super(SchemaAware, self).save(*args, **kwargs)
 
 class SchemaAwareModel(SchemaAware, models.Model):
     """
-    The Base class for models that should be in a seperate schema.
-    
-    You could just put `_is_schema_aware = True` on your model class, though.
+    A Base class for models that should be in a seperate schema.
     """
 
     class Meta:
         abstract = True
+    
