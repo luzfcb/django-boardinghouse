@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% load i18n boardinghouse %}
+
+{% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
+
+{% block content_title %}
+  {% if title %}<h1 style="display: inline">{{ title }}</h1>{% endif %}
+  <em style="display: inline">
+    {% if cl.model|is_schema_aware %}
+      {% if selected_schema %}
+        Only displaying objects from {{ selected_schema|schema_name }}.
+      {% else %}
+        No schema selected.
+      {% endif %}
+    {% endif %}
+    {% if adminform and original.pk and original|is_schema_aware %}
+      This object is from {{ selected_schema|schema_name }}.
+    {% endif %}
+    {% if action_list and object|is_schema_aware %}
+      This object is from {{ selected_schema|schema_name }}.
+    {% endif %}
+    {% if adminform and add and adminform.form.instance|is_schema_aware %}
+      {% if not selected_schema %}
+        <span style="color: red">
+          You must select a schema in order to create {{ opts.verbose_name_plural }}.
+        </span>
+      {% else %}
+        This object will belong to {{ selected_schema|schema_name }}.
+      {% endif %}
+    {% endif %}    
+  </em>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{% trans 'Django administration' %}{% include 'admin/change_schema.html' %}</h1>
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}
