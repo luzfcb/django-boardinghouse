@@ -1,6 +1,7 @@
 """
 """
 import logging
+from threading import local
 
 import django
 from django.conf import settings
@@ -18,6 +19,7 @@ else:
 import ensure_installation
 import signals
 
+_thread_locals = local()
 LOGGER = logging.getLogger(__name__)
 UserModel = getattr(settings, 'AUTH_USER_MODEL', 'auth.user')
 
@@ -160,6 +162,7 @@ class Schema(models.Model):
         signals.schema_pre_activate.send(sender=self, schema=self.schema)
         cursor.execute('SET search_path TO "%s",public' % self.schema)
         signals.schema_post_activate.send(sender=self, schema=self.schema)
+        setattr(_thread_locals, 'schema', self)
     
     @classmethod
     def deactivate(cls, cursor=None):
@@ -173,7 +176,7 @@ class Schema(models.Model):
         signals.schema_pre_activate.send(sender=cls, schema=None)
         cursor.execute('SET search_path TO "$user",public')
         signals.schema_post_activate.send(sender=cls, schema=None)
-    
+        setattr(_thread_locals, 'schema', None)
 
 # This is a bit of fancy trickery to stick the property _is_shared_model
 # on every model class, returning False, unless it has been explicitly

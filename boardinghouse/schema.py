@@ -1,8 +1,11 @@
 import os
+from threading import local
 
 import django
 from django.conf import settings
 from django.db import models, connection
+
+_thread_locals = local()
 
 class Forbidden(Exception):
     pass
@@ -29,20 +32,23 @@ def get_schema():
     
     This requires a database query to ask it what the current `search_path` is.
     """
-    cursor = connection.cursor()
-    cursor.execute('SHOW search_path')
-    search_path = cursor.fetchone()[0]
-    cursor.close()
-    schema_name = search_path.split(',')[0]
-    if schema_name == '__template__':
-        return get_template_schema()
+    # Can't use None as a sentinel value, as that is a valid schema selection.
+    if getattr(_thread_locals, 'schema', False) is False:
+        cursor = connection.cursor()
+        cursor.execute('SHOW search_path')
+        search_path = cursor.fetchone()[0]
+        cursor.close()
+        schema_name = search_path.split(',')[0]
+        if schema_name == '__template__':        
+            setattr(_thread_locals, 'schema', get_template_schema())
+        else:
+            Schema = get_schema_model()
     
-    Schema = get_schema_model()
-    
-    try:
-        return Schema.objects.get(schema=schema_name)
-    except Schema.DoesNotExist:
-        return None
+            try:
+                setattr(_thread_locals, 'schema', Schema.objects.get(schema=schema_name))
+            except Schema.DoesNotExist:
+                setattr(_thread_locals, 'schema', None)
+    return getattr(_thread_locals, 'schema')
 
 def activate_schema(schema):
     """
