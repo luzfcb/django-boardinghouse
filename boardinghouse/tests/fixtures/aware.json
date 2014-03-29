@@ -1,0 +1,17 @@
+[
+  {
+    "pk": null,
+    "model": "boardinghouse.AwareModel",
+    "fields": {
+      "name": "aware1"
+    }
+  },
+  {
+    "pk": null,
+    "model": "boardinghouse.AwareModel",
+    "fields": {
+      "name": "🌊🌊🌊🌊🌊"
+    }
+  }
+  
+]
