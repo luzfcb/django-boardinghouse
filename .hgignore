@@ -1,0 +1,7 @@
+MANIFEST
+.tox
+.coverage
+doc/build
+.venv
+examples/.school
+.boarding-school
