@@ -1,0 +1,17 @@
+[
+  {
+    "pk": null,
+    "model": "boardinghouse.NaiveModel",
+    "fields": {
+      "name": "naive1"
+    }
+  },
+  {
+    "pk": null,
+    "model": "boardinghouse.NaiveModel",
+    "fields": {
+      "name": "🌊🌊🌊🌊🌊"
+    }
+  }
+  
+]
