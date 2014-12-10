@@ -10,13 +10,8 @@ from django.dispatch import receiver
 from django.forms import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from boardinghouse import signals
-
 from .base import SharedSchemaMixin
-from .schema import (
-    create_schema, activate_schema, deactivate_schema,
-    _schema_exists, get_schema_model
-)
+from .schema import create_schema, activate_schema, deactivate_schema, _schema_exists
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.addHandler(logging.NullHandler())
@@ -211,7 +206,7 @@ def invalidate_cache(sender, **kwargs):
 # django-model-utils, due to a bug in django.
 # We will also clear out the global active schemata cache.
 @receiver(models.signals.post_save, sender=Schema)
-@receiver(signals.schema_created, sender=Schema)
+# @receiver(signals.schema_created, sender=Schema)
 def invalidate_all_user_caches(sender, **kwargs):
     cache.delete('active-schemata')
     cache.delete('all-schemata')
