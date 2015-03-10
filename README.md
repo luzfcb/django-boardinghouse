@@ -1,7 +1,8 @@
-Django Boardinghouse
-====================
+# Django Boardinghouse
 
- > cloned from https://bitbucket.org/schinckel/django-boardinghouse
+
+ > Cloned from https://bitbucket.org/schinckel/django-boardinghouse
+ 
 
 Multi-tenancy for Django applications, using Postgres Schemas.
 
